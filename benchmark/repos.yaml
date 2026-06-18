@@ -1,0 +1,137 @@
+repositories:
+  - name: benchmark-java
+    url: https://github.com/OWASP-Benchmark/BenchmarkJava
+    commit: 0352dbb5a4f1e9c29edb2d648bd869bd9f431dcd
+    language: java
+    category: vulnerable_app
+    ground_truth: benchmark-java.csv
+    enabled_checks: [sast, dependency]
+
+  - name: webgoat
+    url: https://github.com/WebGoat/WebGoat
+    commit: 6514586714720ed3673325f99befedf631fcda07
+    language: java
+    category: vulnerable_app
+    ground_truth: webgoat.csv
+    enabled_checks: [sast, dependency, secret]
+
+  - name: juice-shop
+    url: https://github.com/juice-shop/juice-shop
+    commit: c4e9bd518b27af9c2370bbb42ff6bedd201b07cf
+    language: typescript
+    category: vulnerable_app
+    ground_truth: juice-shop.csv
+    enabled_checks: [sast, dependency, secret]
+
+  - name: nodegoat
+    url: https://github.com/OWASP/NodeGoat
+    commit: c5cb68a7084e4ae7dcc60e6a98768720a81841e8
+    language: javascript
+    category: vulnerable_app
+    ground_truth: nodegoat.csv
+    enabled_checks: [sast, dependency, secret]
+
+  - name: dvwa
+    url: https://github.com/digininja/DVWA
+    commit: d45ba3c4e7efa7f023f25f58ab4af9912c887057
+    language: php
+    category: vulnerable_app
+    ground_truth: dvwa.csv
+    enabled_checks: [sast, secret]
+
+  - name: crapi
+    url: https://github.com/OWASP/crAPI
+    commit: 73d309cc8f28bbdeed31dbb35f05dba8354de3c9
+    language: multi
+    category: vulnerable_app
+    ground_truth: crapi.csv
+    enabled_checks: [sast, dependency, secret, iac]
+
+  - name: vampi
+    url: https://github.com/erev0s/VAmPI
+    commit: f16052dce83f05847133ec98f01c5193a41de7d8
+    language: python
+    category: vulnerable_app
+    ground_truth: vampi.csv
+    enabled_checks: [sast, dependency, secret]
+
+  - name: wrongsecrets
+    url: https://github.com/OWASP/wrongsecrets
+    commit: e6642aafd0c573cd995df6a183539d7d2d530574
+    language: java
+    category: vulnerable_app
+    ground_truth: wrongsecrets.csv
+    enabled_checks: [secret, sast, dependency, iac]
+
+  - name: railsgoat
+    url: https://github.com/OWASP/railsgoat
+    commit: 0222f7da3406ba3ab637bc6d24ae9366b5f0a680
+    language: ruby
+    category: vulnerable_app
+    ground_truth: railsgoat.csv
+    enabled_checks: [sast, dependency, secret]
+
+  - name: kubernetes-goat
+    url: https://github.com/madhuakula/kubernetes-goat
+    commit: 723a0db478f050d173d23b4ce5044b65bce0bdd0
+    language: yaml
+    category: vulnerable_app
+    ground_truth: kubernetes-goat.csv
+    enabled_checks: [iac, secret]
+
+  - name: spring-petclinic
+    url: https://github.com/spring-projects/spring-petclinic
+    commit: a2c2ef994340d3970eb6db51247456a51bb161f8
+    language: java
+    category: clean_real_world
+    enabled_checks: [sast, dependency, secret]
+
+  - name: express
+    url: https://github.com/expressjs/express
+    commit: 18e5985b8a9d5e8423db0a9121f22bdaecd5b120
+    language: javascript
+    category: clean_real_world
+    enabled_checks: [sast, dependency, secret]
+
+  - name: django
+    url: https://github.com/django/django
+    commit: cf889381ffec9220ca9d7a8eccef0e06b903fa38
+    language: python
+    category: clean_real_world
+    enabled_checks: [sast, dependency, secret]
+
+  - name: flask
+    url: https://github.com/pallets/flask
+    commit: 36e4a824f340fdee7ed50937ba8e7f6bc7d17f81
+    language: python
+    category: clean_real_world
+    enabled_checks: [sast, dependency, secret]
+
+  - name: realworld
+    url: https://github.com/gothinkster/realworld
+    commit: 98f29fb3f8bcb1dd614b91f2851371bf22c34775
+    language: multi
+    category: clean_real_world
+    enabled_checks: [sast, dependency, secret]
+
+  - name: trivy
+    url: https://github.com/aquasecurity/trivy
+    commit: 0aff3fdf3b8924fe6b9ee69b05276db37a68d0d8
+    language: go
+    category: devsecops_iac
+    enabled_checks: [sast, dependency, secret, iac]
+
+  - name: checkov
+    url: https://github.com/bridgecrewio/checkov
+    commit: efe84c2a9a05c121dd9bb42865865086ea813fa4
+    language: python
+    category: devsecops_iac
+    enabled_checks: [sast, dependency, secret, iac]
+
+  - name: semgrep-rules
+    url: https://github.com/semgrep/semgrep-rules
+    commit: d41fb34cf74466e2878af5f268ebf54466a04541
+    language: yaml
+    category: devsecops_iac
+    enabled_checks: [sast, iac]
+

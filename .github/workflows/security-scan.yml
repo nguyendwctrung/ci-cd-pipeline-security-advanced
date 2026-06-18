@@ -1,0 +1,334 @@
+name: CI/CD Security Scan
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  REPORTS_DIR: security_system/reports/artifacts
+  SCANNER_RESULTS_DIR: security_system/reports/scanner-results
+  GITLEAKS_VERSION: "8.24.2"
+  SEMGREP_VERSION: "1.101.0"
+
+jobs:
+  scan:
+    name: Scan (${{ matrix.tool }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        tool: [gitleaks, semgrep, trivy]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Configure diff context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE="$PR_BASE_SHA"
+            HEAD="$PR_HEAD_SHA"
+          else
+            BASE="$BEFORE_SHA"
+            HEAD="$CURRENT_SHA"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+                BASE="$(git rev-parse --verify HEAD^)"
+              else
+                BASE="$(git hash-object -t tree /dev/null)"
+              fi
+            fi
+          fi
+          printf 'SECURITY_DIFF_BASE=%s\n' "$BASE" >> "$GITHUB_ENV"
+          printf 'SECURITY_DIFF_HEAD=%s\n' "$HEAD" >> "$GITHUB_ENV"
+
+      - name: Install ${{ matrix.tool }}
+        id: install
+        continue-on-error: true
+        shell: bash
+        run: |
+          case "${{ matrix.tool }}" in
+            gitleaks)
+              curl --fail --show-error --location --retry 3 \
+                "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+                -o /tmp/gitleaks.tar.gz
+              tar -tzf /tmp/gitleaks.tar.gz >/dev/null
+              tar -xzf /tmp/gitleaks.tar.gz -C /tmp
+              sudo install -m 0755 /tmp/gitleaks /usr/local/bin/gitleaks
+              gitleaks version
+              ;;
+            semgrep)
+              python -m pip install -q "semgrep==${SEMGREP_VERSION}"
+              semgrep --version
+              ;;
+            trivy)
+              wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+              echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+              sudo apt-get update -qq
+              sudo apt-get install -qq -y trivy
+              trivy --version
+              ;;
+          esac
+
+      - name: Run ${{ matrix.tool }} scan
+        if: ${{ !cancelled() }}
+        run: |
+          python -m security_system.application.scanner_job "${{ matrix.tool }}" \
+            --target . \
+            --output-dir scanner-output \
+            --changed-only \
+            --installation-status "${{ steps.install.outcome }}"
+
+      - name: Upload ${{ matrix.tool }} result
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: scanner-${{ matrix.tool }}
+          path: scanner-output/
+          retention-days: 1
+          if-no-files-found: error
+
+  aggregate:
+    name: Aggregate security decision
+    needs: scan
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: security_system/requirements.txt
+
+      - name: Configure diff context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          CURRENT_SHA: ${{ github.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE="$PR_BASE_SHA"
+            HEAD="$PR_HEAD_SHA"
+          else
+            BASE="$BEFORE_SHA"
+            HEAD="$CURRENT_SHA"
+            if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+              if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+                BASE="$(git rev-parse --verify HEAD^)"
+              else
+                BASE="$(git hash-object -t tree /dev/null)"
+              fi
+            fi
+          fi
+          printf 'SECURITY_DIFF_BASE=%s\n' "$BASE" >> "$GITHUB_ENV"
+          printf 'SECURITY_DIFF_HEAD=%s\n' "$HEAD" >> "$GITHUB_ENV"
+
+      - name: Install Python dependencies
+        run: pip install -q -r security_system/requirements.txt
+        env:
+          PIP_INDEX_URL: https://pypi.org/simple/
+
+      - name: Download scanner results
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          pattern: scanner-*
+          path: ${{ env.SCANNER_RESULTS_DIR }}
+          merge-multiple: true
+
+      - name: Aggregate security pipeline
+        id: decision
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          mkdir -p "${{ env.REPORTS_DIR }}"
+          python -m security_system.application.aggregate_pipeline \
+            --scanner-dir "${{ env.SCANNER_RESULTS_DIR }}" \
+            --reports-dir "${{ env.REPORTS_DIR }}" \
+            2>&1 | tee "${{ env.REPORTS_DIR }}/security-pipeline.log"
+          pipeline_status=${PIPESTATUS[0]}
+          exit "$pipeline_status"
+
+      - name: Display reports
+        if: ${{ !cancelled() }}
+        run: |
+          echo "=== Security Reports ==="
+          for report in summary.json ai_analysis.json decision_report.json monitor_report.json; do
+            path="${{ env.REPORTS_DIR }}/${report}"
+            if [ -f "$path" ]; then
+              echo ""
+              echo "${report}:"
+              cat "$path"
+              echo ""
+            fi
+          done
+
+      - name: Upload security scan output
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-output
+          path: |
+            ${{ env.REPORTS_DIR }}/summary.json
+            ${{ env.REPORTS_DIR }}/ai_analysis.json
+            ${{ env.REPORTS_DIR }}/decision_report.json
+            ${{ env.REPORTS_DIR }}/monitor_report.json
+            ${{ env.REPORTS_DIR }}/security-pipeline.log
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Write security monitoring summary
+        if: ${{ !cancelled() }}
+        run: |
+          path="${{ env.REPORTS_DIR }}/monitor_report.json"
+          if [ -f "$path" ]; then
+            python -m security_system.application.monitor_reporting summary "$path" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## Security Pipeline Monitor" >> "$GITHUB_STEP_SUMMARY"
+            echo "Monitoring report was not generated." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Publish monitoring report
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        env:
+          SECURITY_MONITOR_URL: ${{ secrets.SECURITY_MONITOR_URL }}
+          SECURITY_MONITOR_SECRET: ${{ secrets.SECURITY_MONITOR_SECRET }}
+        run: |
+          if [ -z "$SECURITY_MONITOR_URL" ] || [ -z "$SECURITY_MONITOR_SECRET" ]; then
+            echo "Monitoring endpoint is not configured; skipping publication"
+            exit 0
+          fi
+          path="${{ env.REPORTS_DIR }}/monitor_report.json"
+          if [ -f "$path" ]; then
+            python -m security_system.application.monitor_reporting publish "$path" \
+              --url "$SECURITY_MONITOR_URL" \
+              --secret "$SECURITY_MONITOR_SECRET"
+          else
+            echo "Monitoring report is missing"
+            exit 1
+          fi
+
+      - name: Alert on monitoring infrastructure failure
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '${{ env.REPORTS_DIR }}/monitor_report.json';
+            let shouldAlert = false;
+            let details = 'monitor_report.json was not generated';
+            if (fs.existsSync(path)) {
+              const report = JSON.parse(fs.readFileSync(path, 'utf8'));
+              shouldAlert = report.pipeline_status === 'ERROR';
+              details = report.error
+                ? `${report.error.category}: ${report.error.message}`
+                : `Pipeline status: ${report.pipeline_status}`;
+            } else {
+              shouldAlert = true;
+            }
+            if (!shouldAlert) return;
+
+            const title = 'Security pipeline monitoring failure';
+            const body = `${details}\n\nWorkflow run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = issues.data.find(issue => issue.title === title && !issue.pull_request);
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+
+      - name: Comment PR with security findings
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportsDir = '${{ env.REPORTS_DIR }}';
+            let comment = '## Security Scan Results\n\n';
+
+            try {
+              if (fs.existsSync(`${reportsDir}/ai_analysis.json`)) {
+                const analysis = JSON.parse(fs.readFileSync(`${reportsDir}/ai_analysis.json`, 'utf8'));
+                comment += `### LLM Analysis\n`;
+                comment += `- **Available**: ${analysis.errors && analysis.errors.length ? 'NO' : 'YES'}\n`;
+                comment += `- **Recommendation**: ${analysis.recommended_decision || 'unknown'}\n`;
+                comment += `- **Risk Level**: ${analysis.risk_level}\n`;
+                comment += `- **Malicious**: ${analysis.is_malicious ? 'YES' : 'NO'}\n\n`;
+              }
+              if (fs.existsSync(`${reportsDir}/decision_report.json`)) {
+                const decision = JSON.parse(fs.readFileSync(`${reportsDir}/decision_report.json`, 'utf8'));
+                const icon = decision.decision === 'FAIL' ? '[FAIL]' : decision.decision === 'WARN' ? '[WARN]' : '[PASS]';
+                comment += `### Decision\n`;
+                comment += `${icon} **${decision.decision}**: ${decision.reason}\n\n`;
+                if (decision.metadata) {
+                  comment += `- **Policy**: ${decision.metadata.policy_decision || 'unknown'}\n`;
+                  comment += `- **LLM**: ${decision.metadata.llm_decision || 'unknown'}\n`;
+                  comment += `- **Source**: ${decision.metadata.final_decision_source || 'unknown'}\n`;
+                }
+              }
+            } catch (e) {
+              comment += `Failed to parse reports: ${e.message}\n`;
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment,
+            });

@@ -1,0 +1,6 @@
+backend/.venv/
+backend/.env
+dashboard/.venv/
+dashboard/.streamlit/secrets.toml
+__pycache__/
+.pytest_cache/

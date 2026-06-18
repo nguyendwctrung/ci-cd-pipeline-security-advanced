@@ -1,0 +1,3 @@
+-r security_system/requirements.txt
+-r security_dashboard/backend/requirements.txt
+-r security_dashboard/dashboard/requirements.txt

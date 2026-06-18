@@ -1,0 +1,16 @@
+services:
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8001:8001"
+
+  dashboard:
+    build: ./dashboard
+    restart: unless-stopped
+    volumes:
+      - ./dashboard/.streamlit/secrets.toml:/app/.streamlit/secrets.toml:ro
+    ports:
+      - "8501:8501"
