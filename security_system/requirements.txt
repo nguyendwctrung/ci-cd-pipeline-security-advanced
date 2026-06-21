@@ -1,6 +1,6 @@
-google-genai>=1.75.0
-pandas>=2.3.3
-PyYAML>=6.0.2
+google-genai>=2.9.0
+pandas>=3.0.3
+PyYAML>=6.0.3
 python-dotenv>=1.2.2
-requests>=2.33.1
-# streamlit>=1.57.0
+requests>=2.34.2
+semgrep>=1.167.0

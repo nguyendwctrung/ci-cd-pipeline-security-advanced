@@ -59,6 +59,7 @@ class BenchmarkPaths:
 
     @classmethod
     def from_root(cls, root: Path) -> "BenchmarkPaths":
+        root = root.resolve()
         return cls(
             root=root,
             repos_yaml=root / "repos.yaml",
