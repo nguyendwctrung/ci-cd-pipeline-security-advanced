@@ -1,2 +1,3 @@
-repo,vuln_id,type,cwe,file,line,severity
-
+repo,vuln_id,type,rule_id,cwe,file,line,severity
+dvwa,DVWA-CANDIDATE-0001,secret,generic-api-key,CWE-798,vulnerabilities/csrf/help/help.php,54,HIGH
+dvwa,DVWA-CANDIDATE-0002,secret,generic-api-key,CWE-798,external/recaptcha/recaptchalib.php,41,CRITICAL

@@ -183,12 +183,30 @@ def load_scan_output(
 
 def _load_raw_findings(tool: str, path: Path) -> List[Any]:
 	"""Return the scanner finding list from its native JSON envelope."""
-	with path.open("r", encoding="utf-8") as handle:
-		data = json.load(handle)
+	if not path.exists() or path.stat().st_size == 0:
+		logger.warning("Raw %s report is missing or empty at %s", tool, path)
+		return []
+	
+	try:
+		with path.open("r", encoding="utf-8") as handle:
+			data = json.load(handle)
+	except json.JSONDecodeError as exc:
+		logger.warning("Raw %s report is invalid JSON: %s", tool, exc)
+		return []
+	
 	if tool == "gitleaks":
-		return data if isinstance(data, list) else list(data.get("Leaks", []))
+		if isinstance(data, list):
+			return data
+		return list(data.get("Leaks", [])) if isinstance(data, dict) else []
+	
 	if tool == "semgrep":
-		return list(data.get("results", [])) if isinstance(data, dict) else list(data)
+		if isinstance(data, dict):
+			return list(data.get("results", []))
+		return list(data) if isinstance(data, list) else []
+	
 	if tool == "trivy":
-		return list(data.get("Results", [])) if isinstance(data, dict) else list(data)
+		if isinstance(data, dict):
+			return list(data.get("Results", []))
+		return list(data) if isinstance(data, list) else []
+	
 	raise ValueError(f"Unsupported scanner: {tool}")

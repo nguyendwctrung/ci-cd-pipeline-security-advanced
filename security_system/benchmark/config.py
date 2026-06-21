@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from textwrap import dedent
 
 from security_system.benchmark.models import RepoSpec
 
@@ -41,6 +42,7 @@ def select_repos(repos: list[RepoSpec], name: str | None, run_all: bool) -> list
 
 
 def _load_yaml(content: str) -> dict[str, object]:
+    content = dedent(content)
     if yaml is not None:
         return yaml.safe_load(content) or {}
     return _parse_simple_repos_yaml(content)

@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 from security_system.application.use_cases.run_scan import ScanOutput
 from security_system.benchmark.config import load_repos
+from security_system.benchmark.ground_truth import seed_ground_truth_from_findings
 from security_system.benchmark.models import BenchmarkPaths, RepoSpec
 from security_system.benchmark.normalize import issue_to_benchmark_finding, normalize_scan_output
 from security_system.benchmark.repository import CheckoutResult
@@ -105,7 +106,7 @@ class BenchmarkNormalizeTest(unittest.TestCase):
 
 
 class BenchmarkScoringTest(unittest.TestCase):
-    def test_scores_strict_relaxed_and_category_matches(self) -> None:
+    def test_scores_legacy_csv_without_rule_id(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             findings = root / "repo.findings.json"
@@ -150,6 +151,209 @@ class BenchmarkScoringTest(unittest.TestCase):
         self.assertEqual(score["strict"]["fn"], 1)
         self.assertEqual(score["relaxed"]["tp"], 1)
         self.assertEqual(score["category"]["tp"], 1)
+
+    def test_rule_id_distinguishes_dependency_findings_in_same_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            findings = root / "repo.findings.json"
+            findings.write_text(json.dumps([
+                {
+                    "repo": "repo",
+                    "tool": "trivy",
+                    "rule_id": "CVE-2026-0001",
+                    "category": "dependency",
+                    "cwe": None,
+                    "severity": "HIGH",
+                    "file": "requirements.txt",
+                    "line": None,
+                    "message": "vuln one",
+                    "confidence": "medium",
+                },
+                {
+                    "repo": "repo",
+                    "tool": "trivy",
+                    "rule_id": "CVE-2026-0002",
+                    "category": "dependency",
+                    "cwe": None,
+                    "severity": "HIGH",
+                    "file": "requirements.txt",
+                    "line": None,
+                    "message": "vuln two",
+                    "confidence": "medium",
+                },
+            ]), encoding="utf-8")
+            truth = root / "truth.csv"
+            truth.write_text(
+                "repo,vuln_id,type,rule_id,cwe,file,line,severity\n"
+                "repo,V1,dependency,CVE-2026-0001,,requirements.txt,,HIGH\n"
+                "repo,V2,dependency,CVE-2026-0002,,requirements.txt,,HIGH\n",
+                encoding="utf-8",
+            )
+
+            score = score_repository(findings, truth)
+
+        self.assertEqual(score["strict"]["tp"], 2)
+        self.assertEqual(score["strict"]["fp"], 0)
+        self.assertEqual(score["strict"]["fn"], 0)
+        self.assertEqual(score["relaxed"]["tp"], 2)
+        self.assertEqual(score["category"]["tp"], 2)
+
+    def test_mixed_old_header_new_rows_do_not_shift_line_columns(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            findings = root / "repo.findings.json"
+            findings.write_text(json.dumps([{
+                "repo": "repo",
+                "tool": "trivy",
+                "rule_id": "CVE-2026-0001",
+                "category": "dependency",
+                "cwe": None,
+                "severity": "HIGH",
+                "file": "requirements.txt",
+                "line": None,
+                "message": "vuln one",
+                "confidence": "medium",
+            }]), encoding="utf-8")
+            truth = root / "truth.csv"
+            truth.write_text(
+                "repo,vuln_id,type,cwe,file,line,severity\n"
+                "repo,V1,dependency,CVE-2026-0001,,requirements.txt,,HIGH\n",
+                encoding="utf-8",
+            )
+
+            score = score_repository(findings, truth)
+
+        self.assertEqual(score["strict"]["tp"], 1)
+
+
+class BenchmarkGroundTruthSeedTest(unittest.TestCase):
+    def _repo(self) -> RepoSpec:
+        return RepoSpec(
+            name="dvwa",
+            url="https://example.test/dvwa.git",
+            commit="0123456789abcdef0123456789abcdef01234567",
+            language="php",
+            category="vulnerable_app",
+            enabled_checks=["secret"],
+            ground_truth="dvwa.csv",
+        )
+
+    def test_seed_ground_truth_dry_run_does_not_write(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            findings = root / "dvwa.findings.json"
+            findings.write_text(json.dumps([{
+                "repo": "dvwa",
+                "tool": "gitleaks",
+                "rule_id": "generic-api-key",
+                "category": "secret",
+                "cwe": None,
+                "severity": "HIGH",
+                "file": "config.php",
+                "line": 4,
+                "message": "secret",
+                "confidence": "medium",
+            }]), encoding="utf-8")
+
+            result = seed_ground_truth_from_findings(self._repo(), findings, root, write=False)
+
+        self.assertEqual(result.added, 1)
+        self.assertFalse(result.path.exists())
+
+    def test_seed_ground_truth_writes_and_skips_duplicates(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            findings = root / "dvwa.findings.json"
+            findings.write_text(json.dumps([{
+                "repo": "dvwa",
+                "tool": "gitleaks",
+                "rule_id": "generic-api-key",
+                "category": "secret",
+                "cwe": None,
+                "severity": "HIGH",
+                "file": "config.php",
+                "line": 4,
+                "message": "secret",
+                "confidence": "medium",
+            }]), encoding="utf-8")
+
+            first = seed_ground_truth_from_findings(self._repo(), findings, root, write=True)
+            second = seed_ground_truth_from_findings(self._repo(), findings, root, write=True)
+            content = (root / "dvwa.csv").read_text(encoding="utf-8")
+
+        self.assertEqual(first.added, 1)
+        self.assertEqual(second.added, 0)
+        self.assertEqual(second.skipped_existing, 1)
+        self.assertIn("rule_id", content)
+        self.assertIn("generic-api-key", content)
+        self.assertIn("CWE-798", content)
+
+    def test_seed_ground_truth_duplicate_key_includes_rule_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            findings = root / "dvwa.findings.json"
+            findings.write_text(json.dumps([
+                {
+                    "repo": "dvwa",
+                    "tool": "trivy",
+                    "rule_id": "CVE-1",
+                    "category": "dependency",
+                    "cwe": None,
+                    "severity": "HIGH",
+                    "file": "requirements.txt",
+                    "line": None,
+                    "message": "one",
+                    "confidence": "medium",
+                },
+                {
+                    "repo": "dvwa",
+                    "tool": "trivy",
+                    "rule_id": "CVE-2",
+                    "category": "dependency",
+                    "cwe": None,
+                    "severity": "HIGH",
+                    "file": "requirements.txt",
+                    "line": None,
+                    "message": "two",
+                    "confidence": "medium",
+                },
+            ]), encoding="utf-8")
+
+            result = seed_ground_truth_from_findings(self._repo(), findings, root, write=True)
+            content = (root / "dvwa.csv").read_text(encoding="utf-8")
+
+        self.assertEqual(result.added, 2)
+        self.assertIn("CVE-1", content)
+        self.assertIn("CVE-2", content)
+
+    def test_seed_ground_truth_rewrites_old_schema_header(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "dvwa.csv").write_text(
+                "repo,vuln_id,type,cwe,file,line,severity\n"
+                "dvwa,OLD-1,secret,CWE-798,config.php,4,HIGH\n",
+                encoding="utf-8",
+            )
+            findings = root / "dvwa.findings.json"
+            findings.write_text(json.dumps([{
+                "repo": "dvwa",
+                "tool": "gitleaks",
+                "rule_id": "generic-api-key",
+                "category": "secret",
+                "cwe": None,
+                "severity": "HIGH",
+                "file": "other.php",
+                "line": 5,
+                "message": "secret",
+                "confidence": "medium",
+            }]), encoding="utf-8")
+
+            seed_ground_truth_from_findings(self._repo(), findings, root, write=True)
+            content = (root / "dvwa.csv").read_text(encoding="utf-8")
+
+        self.assertTrue(content.startswith("repo,vuln_id,type,rule_id,cwe,file,line,severity"))
+        self.assertIn("OLD-1,secret,,CWE-798,config.php,4,HIGH", content)
+        self.assertIn("generic-api-key", content)
 
 
 class BenchmarkRunnerTest(unittest.TestCase):

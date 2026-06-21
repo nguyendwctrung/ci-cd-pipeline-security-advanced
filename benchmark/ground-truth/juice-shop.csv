@@ -1,2 +1,14 @@
-repo,vuln_id,type,cwe,file,line,severity
-
+repo,vuln_id,type,rule_id,cwe,file,line,severity
+juice-shop,JUICE_SHOP-CANDIDATE-001,secret,jwt,CWE-798,frontend/src/app/app.guard.spec.ts,46,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-002,secret,jwt,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,72,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-003,secret,generic-api-key,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,78,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-004,secret,generic-api-key,CWE-798,frontend/src/app/oauth/oauth.component.spec.ts,90,HIGH
+juice-shop,JUICE_SHOP-CANDIDATE-005,secret,generic-api-key,CWE-798,frontend/src/app/oauth/oauth.component.spec.ts,97,HIGH
+juice-shop,JUICE_SHOP-CANDIDATE-006,secret,jwt,CWE-798,cypress/integration/e2e/forgedJwt.spec.ts,7,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-007,secret,jwt,CWE-798,cypress/integration/e2e/forgedJwt.spec.ts,22,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-008,secret,generic-api-key,CWE-798,cypress/integration/e2e/totpSetup.spec.ts,7,HIGH
+juice-shop,JUICE_SHOP-CANDIDATE-009,secret,generic-api-key,CWE-798,cypress/integration/e2e/login.spec.ts,126,HIGH
+juice-shop,JUICE_SHOP-CANDIDATE-010,secret,jwt,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,50,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-011,secret,generic-api-key,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,56,CRITICAL
+juice-shop,JUICE_SHOP-CANDIDATE-012,secret,generic-api-key,CWE-798,routes/login.ts,66,HIGH
+juice-shop,JUICE_SHOP-CANDIDATE-013,secret,jwt,CWE-798,frontend/src/app/app.guard.spec.ts,40,CRITICAL

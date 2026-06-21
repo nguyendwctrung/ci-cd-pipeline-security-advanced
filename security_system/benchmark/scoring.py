@@ -6,7 +6,7 @@ import csv
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Mapping, Optional
 
 
 @dataclass(frozen=True)
@@ -16,6 +16,7 @@ class GroundTruthFinding:
     repo: str
     vuln_id: str
     type: str
+    rule_id: Optional[str]
     cwe: Optional[str]
     file: Optional[str]
     line: Optional[int]
@@ -45,10 +46,12 @@ def load_ground_truth(path: Path) -> list[GroundTruthFinding]:
     for row in rows:
         if not any((value or "").strip() for value in row.values()):
             continue
+        row = _normalize_ground_truth_row(row)
         expected.append(GroundTruthFinding(
             repo=(row.get("repo") or "").strip(),
             vuln_id=(row.get("vuln_id") or "").strip(),
             type=(row.get("type") or row.get("expected_category") or "").strip(),
+            rule_id=_blank_to_none(row.get("rule_id")),
             cwe=_blank_to_none(row.get("cwe")),
             file=_blank_to_none(row.get("file")),
             line=_parse_int(row.get("line")),
@@ -102,19 +105,30 @@ def _score_mode(
 
 
 def _strict_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
-    if not _relaxed_match(finding, truth):
+    if truth.rule_id:
+        if not _same_text(finding.get("rule_id"), truth.rule_id):
+            return False
+        if not _same_path(finding.get("file"), truth.file):
+            return False
+    elif not _relaxed_match(finding, truth):
         return False
     if truth.line is None or finding.get("line") is None:
-        return False
+        return bool(truth.rule_id)
     return abs(int(finding["line"]) - truth.line) <= 5
 
 
 def _relaxed_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
+    if truth.rule_id:
+        return _same_text(finding.get("rule_id"), truth.rule_id) and _same_path(finding.get("file"), truth.file)
     return _same_text(finding.get("cwe"), truth.cwe) and _same_path(finding.get("file"), truth.file)
 
 
 def _category_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
-    return _same_text(finding.get("category"), truth.type) or _same_text(finding.get("rule_id"), truth.type)
+    return (
+        _same_text(finding.get("category"), truth.type)
+        or _same_text(finding.get("rule_id"), truth.type)
+        or _same_text(finding.get("rule_id"), truth.rule_id)
+    )
 
 
 def _same_text(left: Any, right: Any) -> bool:
@@ -134,5 +148,27 @@ def _blank_to_none(value: Optional[str]) -> Optional[str]:
 
 def _parse_int(value: Optional[str]) -> Optional[int]:
     value = (value or "").strip()
-    return int(value) if value else None
+    if not value:
+        return None
+    try:
+        return int(value)
+    except ValueError:
+        return None
 
+
+def _normalize_ground_truth_row(row: Mapping[Any, Any]) -> dict[str, Any]:
+    """Recover rows appended with the new schema under the old CSV header."""
+    extra = row.get(None)
+    if extra and "rule_id" not in row:
+        extras = list(extra) if isinstance(extra, list) else [extra]
+        return {
+            "repo": row.get("repo"),
+            "vuln_id": row.get("vuln_id"),
+            "type": row.get("type"),
+            "rule_id": row.get("cwe"),
+            "cwe": row.get("file"),
+            "file": row.get("line"),
+            "line": row.get("severity"),
+            "severity": extras[0] if extras else "",
+        }
+    return {str(key): value for key, value in row.items() if key is not None}

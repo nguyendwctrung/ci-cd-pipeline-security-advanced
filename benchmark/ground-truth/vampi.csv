@@ -1,2 +1,6 @@
-repo,vuln_id,type,cwe,file,line,severity
-
+repo,vuln_id,type,rule_id,cwe,file,line,severity
+vampi,VAMPI-CANDIDATE-0001,secret,jwt,CWE-798,openapi_specs/openapi3.yml,181,CRITICAL
+vampi,VAMPI-CANDIDATE-0002,secret,python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY,CWE-489,config.py,13,MEDIUM
+vampi,VAMPI-CANDIDATE-0003,dependency,CVE-2026-32597,,requirements.txt,,HIGH
+vampi,VAMPI-CANDIDATE-0004,dependency,CVE-2026-48526,,requirements.txt,,HIGH
+vampi,VAMPI-CANDIDATE-0005,dependency,CVE-2023-30861,,requirements.txt,,HIGH

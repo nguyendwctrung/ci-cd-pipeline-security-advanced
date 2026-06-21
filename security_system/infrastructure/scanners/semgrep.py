@@ -11,7 +11,7 @@ from typing import Any, Optional, Sequence
 
 logger = logging.getLogger(__name__)
 
-_TIMEOUT = 120
+_TIMEOUT = 1200
 _DEFAULT_CONFIG = "p/security-audit"
 _DEFAULT_EXCLUDES = (
     "node_modules",
@@ -61,6 +61,7 @@ def run_semgrep(
         raw = _load_json(report_file)
         if raw is None:
             raw = {"results": []}
+            report_file.write_text(json.dumps(raw), encoding="utf-8")
         if changed_files is not None:
             raw = _normalize_report_paths(raw, target)
             report_file.write_text(json.dumps(raw), encoding="utf-8")

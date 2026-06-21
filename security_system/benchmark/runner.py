@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from security_system.application.use_cases.run_scan import load_scan_output
+from security_system.application.use_cases.run_scan import REPORT_PATHS 
 from security_system.benchmark.baselines import run_baseline_stubs
 from security_system.benchmark.models import BenchmarkPaths, RepoSpec
 from security_system.benchmark.normalize import normalize_scan_output
@@ -117,6 +118,11 @@ class BenchmarkRunner:
             return {"status": "ERROR", "error": f"scan timed out after {timeout}s"}
         if result.returncode not in (0, 1):
             return {"status": "ERROR", "error": (result.stderr or result.stdout).strip()[:1000]}
+        log_path = reports_dir / "security-pipeline.log"
+        log_path.write_text(
+            f"STDOUT:\n{result.stdout}\n\nSTDERR:\n{result.stderr}",
+            encoding="utf-8"
+        )
         return {"status": "COMPLETED", "error": ""}
 
     def _write_repo_status(self, repo_name: str, record: dict[str, Any]) -> None:

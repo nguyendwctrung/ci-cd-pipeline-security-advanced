@@ -12,7 +12,7 @@ from typing import Any, Optional, Sequence
 
 logger = logging.getLogger(__name__)
 
-_TIMEOUT = 180
+_TIMEOUT = 1800
 _DEFAULT_SEVERITIES = "HIGH,CRITICAL"
 _DEFAULT_SKIP_DIRS = (
     "node_modules",
@@ -66,6 +66,7 @@ def run_trivy(
         raw = _load_json(report_file)
         if raw is None:
             raw = {"Results": []}
+            report_file.write_text(json.dumps(raw), encoding="utf-8")
         if changed_files is not None:
             raw = _normalize_report_paths(raw, scan_target)
             report_file.write_text(json.dumps(raw), encoding="utf-8")

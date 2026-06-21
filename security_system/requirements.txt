@@ -4,3 +4,4 @@ PyYAML>=6.0.3
 python-dotenv>=1.2.2
 requests>=2.34.2
 semgrep>=1.167.0
+matplotlib>=3.11.0
