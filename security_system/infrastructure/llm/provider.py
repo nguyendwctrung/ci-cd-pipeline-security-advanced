@@ -13,12 +13,34 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 from typing import Optional
 
-from dotenv import load_dotenv
 from security_system.domain.analysis.llm_client import parse_llm_json_response
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
+
+
+def _load_environment() -> None:
+    """Load .env files from stable project locations before reading env vars."""
+    if load_dotenv is None:
+        return
+
+    package_root = Path(__file__).resolve().parents[2]
+    workspace_root = package_root.parent
+    for dotenv_path in (workspace_root / ".env", package_root / ".env"):
+        if dotenv_path.exists():
+            try:
+                load_dotenv(dotenv_path=dotenv_path, override=False)
+            except TypeError:
+                load_dotenv()
+    load_dotenv()
+
+
+_load_environment()
 
 logger = logging.getLogger(__name__)
 
