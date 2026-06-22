@@ -17,3 +17,6 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+
+.agents/
+.codex/

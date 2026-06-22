@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import csv
 import json
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Callable, Iterable, Mapping, Optional
 
 
 @dataclass(frozen=True)
@@ -14,13 +15,15 @@ class GroundTruthFinding:
     """One expected vulnerability from a ground-truth CSV file."""
 
     repo: str
-    vuln_id: str
-    type: str
+    category: str
+    tool: Optional[str]
     rule_id: Optional[str]
     cwe: Optional[str]
     file: Optional[str]
     line: Optional[int]
     severity: Optional[str]
+    message: Optional[str]
+    confidence: Optional[str]
 
 
 def score_repository(findings_path: Path, ground_truth_path: Path) -> dict[str, Any]:
@@ -49,13 +52,15 @@ def load_ground_truth(path: Path) -> list[GroundTruthFinding]:
         row = _normalize_ground_truth_row(row)
         expected.append(GroundTruthFinding(
             repo=(row.get("repo") or "").strip(),
-            vuln_id=(row.get("vuln_id") or "").strip(),
-            type=(row.get("type") or row.get("expected_category") or "").strip(),
+            category=(row.get("category") or row.get("type") or row.get("expected_category") or "").strip(),
+            tool=_blank_to_none(row.get("tool")),
             rule_id=_blank_to_none(row.get("rule_id")),
             cwe=_blank_to_none(row.get("cwe")),
             file=_blank_to_none(row.get("file")),
             line=_parse_int(row.get("line")),
             severity=_blank_to_none(row.get("severity")),
+            message=_blank_to_none(row.get("message") or row.get("vuln_id")),
+            confidence=_blank_to_none(row.get("confidence")),
         ))
     return expected
 
@@ -78,12 +83,14 @@ def _score_mode(
     expected: list[GroundTruthFinding],
     matcher: Callable[[dict[str, Any], GroundTruthFinding], bool],
 ) -> dict[str, float | int]:
+    index = _FindingIndex(findings)
     matched_findings: set[int] = set()
     matched_expected: set[int] = set()
     for expected_index, truth in enumerate(expected):
-        for finding_index, finding in enumerate(findings):
+        for finding_index in index.candidates(truth, matcher):
             if finding_index in matched_findings:
                 continue
+            finding = findings[finding_index]
             if matcher(finding, truth):
                 matched_findings.add(finding_index)
                 matched_expected.add(expected_index)
@@ -102,6 +109,59 @@ def _score_mode(
         "recall": round(recall, 4),
         "f1": round(f1, 4),
     }
+
+
+class _FindingIndex:
+    """Lookup finding candidates while preserving original greedy match order."""
+
+    def __init__(self, findings: list[dict[str, Any]]) -> None:
+        self._all = list(range(len(findings)))
+        self._by_rule_file: dict[tuple[str, str], list[int]] = defaultdict(list)
+        self._by_cwe_file: dict[tuple[str, str], list[int]] = defaultdict(list)
+        self._by_category: dict[str, list[int]] = defaultdict(list)
+        self._by_rule: dict[str, list[int]] = defaultdict(list)
+        for index, finding in enumerate(findings):
+            rule = _normalize_text(finding.get("rule_id"))
+            cwe = _normalize_text(finding.get("cwe"))
+            category = _normalize_text(finding.get("category"))
+            file_path = _normalize_path(finding.get("file"))
+            if rule and file_path:
+                self._by_rule_file[(rule, file_path)].append(index)
+            if cwe and file_path:
+                self._by_cwe_file[(cwe, file_path)].append(index)
+            if category:
+                self._by_category[category].append(index)
+            if rule:
+                self._by_rule[rule].append(index)
+
+    def candidates(
+        self,
+        truth: GroundTruthFinding,
+        matcher: Callable[[dict[str, Any], GroundTruthFinding], bool],
+    ) -> list[int]:
+        if matcher is _strict_match or matcher is _relaxed_match:
+            if truth.rule_id:
+                key = (_normalize_text(truth.rule_id), _normalize_path(truth.file))
+                return list(self._by_rule_file.get(key, []))
+            key = (_normalize_text(truth.cwe), _normalize_path(truth.file))
+            return list(self._by_cwe_file.get(key, []))
+        if matcher is _category_match:
+            return _merge_ordered(
+                self._by_category.get(_normalize_text(truth.category), []),
+                self._by_rule.get(_normalize_text(truth.category), []),
+                self._by_rule.get(_normalize_text(truth.rule_id), []),
+            )
+        return self._all
+
+
+def _merge_ordered(*groups: Iterable[int]) -> list[int]:
+    seen: set[int] = set()
+    merged: list[int] = []
+    for index in sorted({index for group in groups for index in group}):
+        if index not in seen:
+            seen.add(index)
+            merged.append(index)
+    return merged
 
 
 def _strict_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
@@ -125,8 +185,8 @@ def _relaxed_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
 
 def _category_match(finding: dict[str, Any], truth: GroundTruthFinding) -> bool:
     return (
-        _same_text(finding.get("category"), truth.type)
-        or _same_text(finding.get("rule_id"), truth.type)
+        _same_text(finding.get("category"), truth.category)
+        or _same_text(finding.get("rule_id"), truth.category)
         or _same_text(finding.get("rule_id"), truth.rule_id)
     )
 
@@ -136,9 +196,15 @@ def _same_text(left: Any, right: Any) -> bool:
 
 
 def _same_path(left: Any, right: Any) -> bool:
-    if not left or not right:
-        return False
-    return str(left).replace("\\", "/").strip().lower() == str(right).replace("\\", "/").strip().lower()
+    return bool(_normalize_path(left) and _normalize_path(left) == _normalize_path(right))
+
+
+def _normalize_text(value: Any) -> str:
+    return str(value).strip().lower() if value else ""
+
+
+def _normalize_path(value: Any) -> str:
+    return str(value).replace("\\", "/").strip().lower() if value else ""
 
 
 def _blank_to_none(value: Optional[str]) -> Optional[str]:

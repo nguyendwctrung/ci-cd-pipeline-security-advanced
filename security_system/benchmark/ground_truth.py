@@ -10,20 +10,33 @@ from typing import Any, Mapping, Optional, TypedDict
 
 from security_system.benchmark.models import RepoSpec
 
-GROUND_TRUTH_FIELDS: list[str] = ["repo", "vuln_id", "type", "rule_id", "cwe", "file", "line", "severity"]
+GROUND_TRUTH_FIELDS: list[str] = [
+    "repo",
+    "tool",
+    "rule_id",
+    "category",
+    "cwe",
+    "severity",
+    "file",
+    "line",
+    "message",
+    "confidence",
+]
 
 
 class GroundTruthRow(TypedDict):
     """CSV row shape for benchmark ground truth."""
 
     repo: str
-    vuln_id: str
-    type: str
+    tool: str
     rule_id: str
+    category: str
     cwe: str
+    severity: str
     file: str
     line: str
-    severity: str
+    message: str
+    confidence: str
 
 
 @dataclass(frozen=True)
@@ -87,13 +100,15 @@ def _load_findings(path: Path) -> list[dict[str, Any]]:
 def _finding_to_ground_truth_row(repo_name: str, index: int, finding: dict[str, Any]) -> GroundTruthRow:
     return {
         "repo": repo_name,
-        "vuln_id": f"{repo_name.upper().replace('-', '_')}-CANDIDATE-{index:04d}",
-        "type": str(finding.get("category") or finding.get("rule_id") or ""),
+        "tool": str(finding.get("tool") or ""),
         "rule_id": str(finding.get("rule_id") or ""),
+        "category": str(finding.get("category") or finding.get("rule_id") or ""),
         "cwe": str(finding.get("cwe") or _default_cwe_for_category(finding.get("category")) or ""),
+        "severity": str(finding.get("severity") or ""),
         "file": str(finding.get("file") or ""),
         "line": "" if finding.get("line") is None else str(finding.get("line")),
-        "severity": str(finding.get("severity") or ""),
+        "message": str(finding.get("message") or f"{repo_name.upper().replace('-', '_')}-CANDIDATE-{index:04d}"),
+        "confidence": str(finding.get("confidence") or "medium"),
     }
 
 
@@ -116,7 +131,7 @@ def _existing_keys(path: Path) -> set[tuple[str, str, str, str, str]]:
 
 def _row_key(row: Mapping[str, Any]) -> tuple[str, str, str, str, str]:
     return (
-        str(row.get("type") or "").strip().lower(),
+        str(row.get("category") or "").strip().lower(),
         str(row.get("rule_id") or "").strip().lower(),
         str(row.get("cwe") or "").strip().lower(),
         str(row.get("file") or "").replace("\\", "/").strip().lower(),
@@ -161,23 +176,27 @@ def _normalize_existing_row(row: Mapping[Any, Any]) -> GroundTruthRow:
         extras = list(extra) if isinstance(extra, list) else [extra]
         return {
             "repo": str(row.get("repo") or ""),
-            "vuln_id": str(row.get("vuln_id") or ""),
-            "type": str(row.get("type") or ""),
+            "tool": "",
             "rule_id": str(row.get("cwe") or ""),
+            "category": str(row.get("type") or ""),
             "cwe": str(row.get("file") or ""),
+            "severity": str(extras[0] if extras else ""),
             "file": str(row.get("line") or ""),
             "line": str(row.get("severity") or ""),
-            "severity": str(extras[0] if extras else ""),
+            "message": str(row.get("vuln_id") or ""),
+            "confidence": "medium",
         }
     return {
         "repo": str(row.get("repo") or ""),
-        "vuln_id": str(row.get("vuln_id") or ""),
-        "type": str(row.get("type") or ""),
+        "tool": str(row.get("tool") or ""),
         "rule_id": str(row.get("rule_id") or ""),
+        "category": str(row.get("category") or row.get("type") or ""),
         "cwe": str(row.get("cwe") or ""),
+        "severity": str(row.get("severity") or ""),
         "file": str(row.get("file") or ""),
         "line": str(row.get("line") or ""),
-        "severity": str(row.get("severity") or ""),
+        "message": str(row.get("message") or row.get("vuln_id") or ""),
+        "confidence": str(row.get("confidence") or "medium"),
     }
 
 

@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
 from security_system.application.use_cases.run_scan import ScanOutput
+from security_system.benchmark.cli import main as benchmark_main
 from security_system.benchmark.config import load_repos
 from security_system.benchmark.ground_truth import seed_ground_truth_from_findings
 from security_system.benchmark.models import BenchmarkPaths, RepoSpec
 from security_system.benchmark.normalize import issue_to_benchmark_finding, normalize_scan_output
+from security_system.benchmark.reporting import generate_summary
 from security_system.benchmark.repository import CheckoutResult
 from security_system.benchmark.runner import BenchmarkRunner
 from security_system.benchmark.scoring import score_repository
@@ -285,6 +290,7 @@ class BenchmarkGroundTruthSeedTest(unittest.TestCase):
         self.assertEqual(second.added, 0)
         self.assertEqual(second.skipped_existing, 1)
         self.assertIn("rule_id", content)
+        self.assertIn("category", content)
         self.assertIn("generic-api-key", content)
         self.assertIn("CWE-798", content)
 
@@ -351,8 +357,8 @@ class BenchmarkGroundTruthSeedTest(unittest.TestCase):
             seed_ground_truth_from_findings(self._repo(), findings, root, write=True)
             content = (root / "dvwa.csv").read_text(encoding="utf-8")
 
-        self.assertTrue(content.startswith("repo,vuln_id,type,rule_id,cwe,file,line,severity"))
-        self.assertIn("OLD-1,secret,,CWE-798,config.php,4,HIGH", content)
+        self.assertTrue(content.startswith("repo,tool,rule_id,category,cwe,severity,file,line,message,confidence"))
+        self.assertIn("dvwa,,,secret,CWE-798,HIGH,config.php,4,OLD-1,medium", content)
         self.assertIn("generic-api-key", content)
 
 
@@ -414,6 +420,120 @@ class BenchmarkRunnerTest(unittest.TestCase):
 
         self.assertEqual(record["status"], "COMPLETED")
         runner.repo_manager.prepare.assert_called_once()
+
+    def test_parallel_run_many_preserves_repo_order(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = BenchmarkPaths.from_root(Path(tmp))
+            runner = BenchmarkRunner(paths)
+
+            def run_one(repo: RepoSpec, *, force: bool = False) -> dict[str, str]:  # noqa: ARG001
+                if repo.name == "slow":
+                    time.sleep(0.02)
+                return {"repo": repo.name, "status": "COMPLETED"}
+
+            runner.run_one = run_one  # type: ignore[method-assign]
+
+            records = runner.run_many([self._repo("slow"), self._repo("fast")], jobs=2)
+
+        self.assertEqual([record["repo"] for record in records], ["slow", "fast"])
+
+    def test_parallel_run_many_writes_repo_status_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            paths = BenchmarkPaths.from_root(Path(tmp))
+            paths.normalized_dir.mkdir(parents=True)
+            (paths.normalized_dir / "skipped.findings.json").write_text("[]", encoding="utf-8")
+            runner = BenchmarkRunner(paths)
+
+            def prepare(repo: RepoSpec) -> CheckoutResult:
+                if repo.name == "bad":
+                    return CheckoutResult(repo=repo.name, path=Path(tmp) / repo.name, status="ERROR", commit=repo.commit, error="clone failed")
+                return CheckoutResult(repo=repo.name, path=Path(tmp) / repo.name, status="READY", commit=repo.commit)
+
+            runner.repo_manager.prepare = prepare  # type: ignore[method-assign]
+            runner._run_pipeline_subprocess = Mock(return_value={"status": "COMPLETED", "error": ""})  # pylint: disable=protected-access
+            repos = [self._repo("skipped"), self._repo("good"), self._repo("bad")]
+
+            with patch("security_system.benchmark.runner.load_scan_output", return_value=ScanOutput()):
+                records = runner.run_many(repos, force=False, jobs=3)
+
+            statuses = {
+                repo.name: json.loads((paths.results_dir / "runs" / f"{repo.name}.json").read_text(encoding="utf-8"))["status"]
+                for repo in repos
+            }
+
+        self.assertEqual([record["status"] for record in records], ["SKIPPED", "COMPLETED", "ERROR"])
+        self.assertEqual(statuses, {"skipped": "SKIPPED", "good": "COMPLETED", "bad": "ERROR"})
+
+
+class BenchmarkCliTest(unittest.TestCase):
+    def _write_repos_yaml(self, root: Path) -> None:
+        root.mkdir(parents=True, exist_ok=True)
+        (root / "repos.yaml").write_text(
+            """
+repositories:
+  - name: sample
+    url: https://example.test/repo.git
+    commit: 0123456789abcdef0123456789abcdef01234567
+    language: python
+    category: vulnerable_app
+    enabled_checks: [sast, secret]
+    ground_truth: sample.csv
+""",
+            encoding="utf-8",
+        )
+
+    def test_run_list_prints_repositories_without_scanning(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "benchmark"
+            self._write_repos_yaml(root)
+            output = io.StringIO()
+
+            with contextlib.redirect_stdout(output):
+                benchmark_main(["--benchmark-root", str(root), "run", "--list"])
+
+        self.assertIn("sample: language=python", output.getvalue())
+        self.assertIn("ground_truth=sample.csv", output.getvalue())
+
+    def test_jobs_rejects_values_below_one(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "benchmark"
+            self._write_repos_yaml(root)
+
+            with self.assertRaises(SystemExit) as raised:
+                benchmark_main(["--benchmark-root", str(root), "run", "--all", "--jobs", "0"])
+
+        self.assertEqual(raised.exception.code, 2)
+
+    def test_status_reports_run_and_artifact_state(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "benchmark"
+            self._write_repos_yaml(root)
+            paths = BenchmarkPaths.from_root(root)
+            (paths.results_dir / "runs").mkdir(parents=True)
+            (paths.results_dir / "runs" / "sample.json").write_text(
+                json.dumps({"repo": "sample", "status": "ERROR", "stage": "scan", "error": "timeout"}),
+                encoding="utf-8",
+            )
+            paths.normalized_dir.mkdir(parents=True)
+            (paths.normalized_dir / "sample.findings.json").write_text("[]", encoding="utf-8")
+            output = io.StringIO()
+
+            with contextlib.redirect_stdout(output):
+                benchmark_main(["--benchmark-root", str(root), "status"])
+
+        text = output.getvalue()
+        self.assertIn("sample: ERROR normalized=yes scored=no", text)
+        self.assertIn("reason=timeout", text)
+        self.assertIn("TOTAL: completed=0 error=1 skipped=0 not_run=0 scored=0", text)
+
+
+class BenchmarkReportingTest(unittest.TestCase):
+    def test_generate_summary_writes_header_for_empty_repo_list(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = generate_summary(BenchmarkPaths.from_root(Path(tmp)), [])
+            content = path.read_text(encoding="utf-8")
+
+        self.assertIn("repo,language,category,enabled_checks,timeout_seconds", content)
 
 
 if __name__ == "__main__":

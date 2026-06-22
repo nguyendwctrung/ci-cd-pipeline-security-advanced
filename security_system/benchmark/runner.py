@@ -7,11 +7,11 @@ import os
 import subprocess
 import sys
 import time
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from pathlib import Path
 from typing import Any
 
 from security_system.application.use_cases.run_scan import load_scan_output
-from security_system.application.use_cases.run_scan import REPORT_PATHS 
 from security_system.benchmark.baselines import run_baseline_stubs
 from security_system.benchmark.models import BenchmarkPaths, RepoSpec
 from security_system.benchmark.normalize import normalize_scan_output
@@ -27,8 +27,27 @@ class BenchmarkRunner:
         for directory in (paths.raw_dir, paths.normalized_dir, paths.scored_dir):
             directory.mkdir(parents=True, exist_ok=True)
 
-    def run_many(self, repos: list[RepoSpec], *, force: bool = False) -> list[dict[str, Any]]:
-        records = [self.run_one(repo, force=force) for repo in repos]
+    def run_many(
+        self,
+        repos: list[RepoSpec],
+        *,
+        force: bool = False,
+        jobs: int = 1,
+        fail_fast: bool = False,
+    ) -> list[dict[str, Any]]:
+        if jobs < 1:
+            raise ValueError("jobs must be at least 1")
+        if jobs == 1 or len(repos) <= 1:
+            records = []
+            for repo in repos:
+                record = self.run_one(repo, force=force)
+                records.append(record)
+                if fail_fast and record.get("status") == "ERROR":
+                    break
+            self._write_run_status(records)
+            return records
+
+        records = self._run_many_parallel(repos, force=force, jobs=jobs, fail_fast=fail_fast)
         self._write_run_status(records)
         return records
 
@@ -36,12 +55,14 @@ class BenchmarkRunner:
         normalized_path = self.paths.normalized_dir / f"{repo.name}.findings.json"
         raw_repo_dir = self.paths.raw_dir / repo.name
         if normalized_path.exists() and not force:
-            return {
+            record = {
                 "repo": repo.name,
                 "status": "SKIPPED",
                 "reason": "normalized findings already exist",
                 "normalized": str(normalized_path),
             }
+            self._write_repo_status(repo.name, record)
+            return record
 
         checkout = self.repo_manager.prepare(repo)
         if checkout.status != "READY":
@@ -92,6 +113,47 @@ class BenchmarkRunner:
         }
         self._write_repo_status(repo.name, record)
         return record
+
+    def _run_many_parallel(
+        self,
+        repos: list[RepoSpec],
+        *,
+        force: bool,
+        jobs: int,
+        fail_fast: bool,
+    ) -> list[dict[str, Any]]:
+        records_by_index: dict[int, dict[str, Any]] = {}
+        next_index = 0
+        active: dict[Future[dict[str, Any]], int] = {}
+
+        with ThreadPoolExecutor(max_workers=jobs) as executor:
+            while next_index < len(repos) and len(active) < jobs:
+                active[executor.submit(self.run_one, repos[next_index], force=force)] = next_index
+                next_index += 1
+
+            while active:
+                done, _ = wait(active, return_when=FIRST_COMPLETED)
+                should_stop = False
+                for future in done:
+                    index = active.pop(future)
+                    records_by_index[index] = future.result()
+                    if fail_fast and records_by_index[index].get("status") == "ERROR":
+                        should_stop = True
+                if should_stop:
+                    for future in list(active):
+                        future.cancel()
+                    done_after_stop, _ = wait(active)
+                    for future in done_after_stop:
+                        index = active.pop(future)
+                        if future.cancelled():
+                            continue
+                        records_by_index[index] = future.result()
+                    break
+                while next_index < len(repos) and len(active) < jobs:
+                    active[executor.submit(self.run_one, repos[next_index], force=force)] = next_index
+                    next_index += 1
+
+        return [records_by_index[index] for index in sorted(records_by_index)]
 
     def _run_pipeline_subprocess(self, target: Path, reports_dir: Path, timeout: int) -> dict[str, str | int]:
         workspace = Path.cwd()
