@@ -1,2 +1,53 @@
-repo,vuln_id,type,cwe,file,line,severity
-
+repo,tool,rule_id,category,cwe,severity,file,line,message,confidence
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,scenarios/hunger-check/deployment.yaml,44,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,scenarios/hunger-check/deployment.yaml,53,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,kubernetes-secret-yaml,secret,CWE-798,CRITICAL,scenarios/hunger-check/deployment.yaml,38,Potential secret detected by rule kubernetes-secret-yaml,medium
+kubernetes-goat,gitleaks,kubernetes-secret-yaml,secret,CWE-798,CRITICAL,scenarios/hunger-check/deployment.yaml,47,Potential secret detected by rule kubernetes-secret-yaml,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,HIGH,guide/src/reports/kics-output.html,267,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,HIGH,guide/src/reports/kics-output.html,268,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,guide/src/reports/kics-output.html,654,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,guide/src/reports/kics-output.html,667,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,HIGH,guide/src/scenarios/scenario-12.md,24,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,guide/src/kubernetes-cluster/gke.md,21,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,HIGH,infrastructure/users-repos/Dockerfile,4,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,scenarios/kubernetes-secrets-encode/deployment.yaml,7,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,kubernetes-secret-yaml,secret,CWE-798,CRITICAL,scenarios/kubernetes-secrets-encode/deployment.yaml,2,Potential secret detected by rule kubernetes-secret-yaml,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,scenarios/system-monitor/deployment.yaml,7,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,generic-api-key,secret,CWE-798,HIGH,scenarios/system-monitor/deployment.yaml,50,Potential secret detected by rule generic-api-key,medium
+kubernetes-goat,gitleaks,kubernetes-secret-yaml,secret,CWE-798,CRITICAL,scenarios/system-monitor/deployment.yaml,2,Potential secret detected by rule kubernetes-secret-yaml,medium
+kubernetes-goat,semgrep,python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host,sast,CWE-668,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\kubernetes-goat\infrastructure\info-app\app.py,11,Running flask app with host 0.0.0.0 could expose the server publicly.,medium
+kubernetes-goat,semgrep,python.flask.security.audit.debug-enabled.debug-enabled,sast,CWE-489,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\kubernetes-goat\infrastructure\info-app\app.py,11,"Detected Flask app with debug=True. Do not deploy to production with this flag enabled as it will leak sensitive information. Instead, consider using Flask configuration variables or setting 'debug' u",medium
+kubernetes-goat,semgrep,go.lang.security.audit.net.use-tls.use-tls,sast,CWE-319,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\kubernetes-goat\infrastructure\metadata-db\main.go,12,Found an HTTP server without TLS. Use 'http.ListenAndServeTLS' instead. See https://golang.org/pkg/net/http/#ListenAndServeTLS for more information.,medium
+kubernetes-goat,trivy,CVE-2026-44728,dependency,,HIGH,guide/yarn.lock,,@babel/plugin-transform-modules-systemjs: Babel is a compiler for writing next generation JavaScript. From 7.12. ...,medium
+kubernetes-goat,trivy,CVE-2024-45590,dependency,,HIGH,guide/yarn.lock,,body-parser: body-parser: Denial of Service Vulnerability in body-parser,medium
+kubernetes-goat,trivy,CVE-2024-21538,dependency,,HIGH,guide/yarn.lock,,cross-spawn: cross-spawn: regular expression denial of service,medium
+kubernetes-goat,trivy,CVE-2026-6321,dependency,,HIGH,guide/yarn.lock,,fast-uri: fast-uri: fast-uri: Path traversal vulnerability allows bypass of security policies,medium
+kubernetes-goat,trivy,CVE-2026-6322,dependency,,HIGH,guide/yarn.lock,,fast-uri: fast-uri: fast-uri: URI authority bypass due to improper delimiter handling,medium
+kubernetes-goat,trivy,CVE-2024-21536,dependency,,HIGH,guide/yarn.lock,,http-proxy-middleware: http-proxy-middleware: Denial of Service,medium
+kubernetes-goat,trivy,CVE-2025-71319,dependency,,HIGH,guide/yarn.lock,,image-size: image-size Denial of Service via Infinite Loop during Image Processing,medium
+kubernetes-goat,trivy,CVE-2024-52011,dependency,,HIGH,guide/yarn.lock,,launch-editor: launch-editor: vite: launch-editor: Arbitrary command execution via insufficient file argument sanitization,medium
+kubernetes-goat,trivy,CVE-2026-4800,dependency,,HIGH,guide/yarn.lock,,lodash: lodash: lodash: Arbitrary code execution via untrusted input in template imports,medium
+kubernetes-goat,trivy,CVE-2026-26996,dependency,,HIGH,guide/yarn.lock,,minimatch: minimatch: minimatch: Denial of Service via specially crafted glob patterns,medium
+kubernetes-goat,trivy,CVE-2026-27903,dependency,,HIGH,guide/yarn.lock,,minimatch: minimatch: minimatch: Denial of Service due to unbounded recursive backtracking via crafted glob patterns,medium
+kubernetes-goat,trivy,CVE-2026-27904,dependency,,HIGH,guide/yarn.lock,,minimatch: minimatch: Minimatch: Denial of Service via catastrophic backtracking in glob expressions,medium
+kubernetes-goat,trivy,CVE-2025-12816,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: node-forge: Interpretation conflict vulnerability allows bypassing cryptographic verifications,medium
+kubernetes-goat,trivy,CVE-2025-66031,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: node-forge ASN.1 Unbounded Recursion,medium
+kubernetes-goat,trivy,CVE-2026-33891,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: node-forge: Denial of Service via infinite loop in BigInteger.modInverse(),medium
+kubernetes-goat,trivy,CVE-2026-33894,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: Forge: Signature Forgery via Weak RSASSA PKCS#1 v1.5 Verification,medium
+kubernetes-goat,trivy,CVE-2026-33895,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: Forge: Authentication bypass via forged Ed25519 cryptographic signatures,medium
+kubernetes-goat,trivy,CVE-2026-33896,dependency,,HIGH,guide/yarn.lock,,node-forge: node-forge: Forge (node-forge): Certificate validation bypass allows unauthorized certificate issuance,medium
+kubernetes-goat,trivy,CVE-2024-45296,dependency,,HIGH,guide/yarn.lock,,path-to-regexp: path-to-regexp: Backtracking regular expressions cause ReDoS,medium
+kubernetes-goat,trivy,CVE-2024-52798,dependency,,HIGH,guide/yarn.lock,,path-to-regexp: path-to-regexp: path-to-regexp Unpatched `path-to-regexp` ReDoS in 0.1.x,medium
+kubernetes-goat,trivy,CVE-2026-4867,dependency,,HIGH,guide/yarn.lock,,path-to-regexp: path-to-regexp: path-to-regexp: Denial of Service via catastrophic backtracking from malformed URL parameters,medium
+kubernetes-goat,trivy,CVE-2026-33671,dependency,,HIGH,guide/yarn.lock,,picomatch: picomatch: Picomatch: Regular Expression Denial of Service via crafted extglob patterns,medium
+kubernetes-goat,trivy,GHSA-5c6j-r48x-rmvq,iac,,HIGH,guide/yarn.lock,,serialize-javascript: Serialize JavaScript is Vulnerable to RCE via RegExp.flags and Date.prototype.toISOString(),medium
+kubernetes-goat,trivy,CVE-2026-9277,dependency,,CRITICAL,guide/yarn.lock,,shell-quote: shell-quote: shell-quote: Arbitrary code execution via command injection due to unescaped line terminators,medium
+kubernetes-goat,trivy,CVE-2026-29074,dependency,,HIGH,guide/yarn.lock,,svgo: svgo: SVGO: Denial of Service via XML entity expansion,medium
+kubernetes-goat,trivy,CVE-2026-48779,dependency,,HIGH,guide/yarn.lock,,ws: ws is an open source WebSocket client and server for Node.js. All vers ...,medium
+kubernetes-goat,trivy,CVE-2025-66630,dependency,,CRITICAL,infrastructure/health-check/go.mod,,github.com/gofiber/fiber/v2: github.com/gofiber/fiber/v2: Fiber: Predictable UUIDs from randomness source errors can lead to security bypasses,medium
+kubernetes-goat,trivy,CVE-2025-54801,dependency,,HIGH,infrastructure/health-check/go.mod,,github.com/gofiber/fiber/v2: Fiber Crashes in BodyParser Due to Unvalidated Large Slice Index in Decoder,medium
+kubernetes-goat,trivy,CVE-2025-66565,dependency,,CRITICAL,infrastructure/health-check/go.mod,,github.com/gofiber/utils: Fiber Utils UUIDv4 and UUID Silent Fallback to Predictable Values,medium
+kubernetes-goat,trivy,CVE-2024-45590,dependency,,HIGH,infrastructure/internal-api/code/package-lock.json,,body-parser: body-parser: Denial of Service Vulnerability in body-parser,medium
+kubernetes-goat,trivy,CVE-2024-45296,dependency,,HIGH,infrastructure/internal-api/code/package-lock.json,,path-to-regexp: path-to-regexp: Backtracking regular expressions cause ReDoS,medium
+kubernetes-goat,trivy,CVE-2024-52798,dependency,,HIGH,infrastructure/internal-api/code/package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp Unpatched `path-to-regexp` ReDoS in 0.1.x,medium
+kubernetes-goat,trivy,CVE-2026-4867,dependency,,HIGH,infrastructure/internal-api/code/package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp: Denial of Service via catastrophic backtracking from malformed URL parameters,medium

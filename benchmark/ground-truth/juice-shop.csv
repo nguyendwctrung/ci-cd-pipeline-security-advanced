@@ -1,14 +1,138 @@
-repo,vuln_id,type,rule_id,cwe,file,line,severity
-juice-shop,JUICE_SHOP-CANDIDATE-001,secret,jwt,CWE-798,frontend/src/app/app.guard.spec.ts,46,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-002,secret,jwt,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,72,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-003,secret,generic-api-key,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,78,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-004,secret,generic-api-key,CWE-798,frontend/src/app/oauth/oauth.component.spec.ts,90,HIGH
-juice-shop,JUICE_SHOP-CANDIDATE-005,secret,generic-api-key,CWE-798,frontend/src/app/oauth/oauth.component.spec.ts,97,HIGH
-juice-shop,JUICE_SHOP-CANDIDATE-006,secret,jwt,CWE-798,cypress/integration/e2e/forgedJwt.spec.ts,7,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-007,secret,jwt,CWE-798,cypress/integration/e2e/forgedJwt.spec.ts,22,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-008,secret,generic-api-key,CWE-798,cypress/integration/e2e/totpSetup.spec.ts,7,HIGH
-juice-shop,JUICE_SHOP-CANDIDATE-009,secret,generic-api-key,CWE-798,cypress/integration/e2e/login.spec.ts,126,HIGH
-juice-shop,JUICE_SHOP-CANDIDATE-010,secret,jwt,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,50,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-011,secret,generic-api-key,CWE-798,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,56,CRITICAL
-juice-shop,JUICE_SHOP-CANDIDATE-012,secret,generic-api-key,CWE-798,routes/login.ts,66,HIGH
-juice-shop,JUICE_SHOP-CANDIDATE-013,secret,jwt,CWE-798,frontend/src/app/app.guard.spec.ts,40,CRITICAL
+repo,tool,rule_id,category,cwe,severity,file,line,message,confidence
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,104,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,123,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/basket.test.ts,170,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,317,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,412,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/data-export.test.ts,51,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chat.test.ts,261,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/checkKeys.test.ts,46,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/checkKeys.test.ts,57,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/checkKeys.test.ts,68,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verify.unit.test.ts,256,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verify.unit.test.ts,264,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verify.unit.test.ts,281,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verify.unit.test.ts,289,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,frontend/src/app/app.guard.spec.ts,46,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,72,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,78,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,frontend/src/app/oauth/oauth.component.spec.ts,90,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,frontend/src/app/oauth/oauth.component.spec.ts,97,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,42,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,66,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,85,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,144,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,176,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,202,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,219,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,228,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,281,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/2fa.test.ts,308,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/basket.test.ts,110,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/web3.test.ts,48,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/web3.test.ts,59,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/web3.test.ts,70,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,34,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,53,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,66,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,80,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,91,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/erasure-request.test.ts,103,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/product-review.test.ts,101,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/product-review.test.ts,115,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/data-export.test.ts,25,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/data-export.test.ts,42,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/data-export.test.ts,62,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/feedback.test.ts,117,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/feedback.test.ts,143,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/login.test.ts,147,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/login.test.ts,245,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/login.test.ts,267,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/2fa.test.ts,112,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/2fa.test.ts,262,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/api-supertest/user.test.ts,280,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/user.test.ts,240,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/user.test.ts,289,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/user.test.ts,304,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/user.test.ts,318,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api-supertest/user.test.ts,280,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.ts,315,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.ts,338,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.ts,359,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSensitiveSpec.ts,17,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.ts,36,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/web3Spec.ts,36,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/web3Spec.ts,48,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/web3Spec.ts,60,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/cypress/e2e/login.spec.ts,126,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.ts,99,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.ts,119,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.ts,139,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,frontend/src/app/faucet/faucet.component.ts,828,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,cypress/integration/e2e/forgedJwt.spec.ts,7,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,cypress/integration/e2e/forgedJwt.spec.ts,22,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,cypress/integration/e2e/login.spec.ts,126,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,cypress/integration/e2e/totpSetup.spec.ts,7,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,50,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,CRITICAL,frontend/src/app/last-login-ip/last-login-ip.component.spec.ts,56,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.ts,37,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,routes/login.ts,66,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/productReviewApiSpec.ts,106,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/e2e/forgedJwtSpec.ts,11,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/e2e/forgedJwtSpec.ts,21,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.ts,31,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.ts,262,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.ts,274,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.ts,296,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.ts,308,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/api/userApiSpec.ts,262,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.ts,262,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,frontend/src/app/app.guard.spec.ts,40,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,161,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,99,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,127,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,180,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,frontend/src/app/oauth/oauth.component.spec.ts,83,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,153,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,154,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,150,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,72,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/chatBotSpec.js,106,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/e2e/forgedJwtSpec.js,20,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.js,291,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.js,303,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.js,31,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/e2e/forgedJwtSpec.js,18,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.js,289,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.js,29,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/verifySpec.js,301,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/server/currentUserSpec.js,31,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,routes/login.js,65,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.js,24,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/server/currentUserSpec.js,24,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/api/userApiSpec.js,254,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.js,254,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,jwt,secret,CWE-798,CRITICAL,test/server/currentUserSpec.js,26,Potential secret detected by rule jwt,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/server/currentUserSpec.js,26,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/dataExportApiSpec.js,13,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.js,12,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/basketApiSpec.js,81,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,data/static/users.yml,37,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/dataExportApiSpec.js,40,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,routes/login.js,72,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/erasureRequestApiSpec.js,26,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/dataExportApiSpec.js,69,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/loginApiSpec.js,143,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/userApiSpec.js,146,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/feedbackApiSpec.js,110,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/productReviewApiSpec.js,99,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/loginApiSpec.js,245,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/loginApiSpec.js,266,Potential secret detected by rule generic-api-key,medium
+juice-shop,gitleaks,generic-api-key,secret,CWE-798,HIGH,test/api/feedbackApiSpec.js,143,Potential secret detected by rule generic-api-key,medium
+juice-shop,semgrep,generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\frontend\src\app\navbar\navbar.component.html,17,"Detected a unquoted template variable as an attribute. If unquoted, a malicious actor could inject custom JavaScript handlers. To fix this, add quotes around the template expression, like this: ""{{ ex",medium
+juice-shop,semgrep,generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\frontend\src\app\purchase-basket\purchase-basket.component.html,15,"Detected a unquoted template variable as an attribute. If unquoted, a malicious actor could inject custom JavaScript handlers. To fix this, add quotes around the template expression, like this: ""{{ ex",medium
+juice-shop,semgrep,javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret,secret,CWE-798,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\lib\insecurity.ts,56,"A hard-coded credential was detected. It is not recommended to store credentials in source-code, as this risks secrets being leaked and used by either an internal or external malicious adversary. It i",medium
+juice-shop,semgrep,javascript.express.security.audit.possible-user-input-redirect.unknown-value-in-redirect,sast,CWE-601,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\routes\redirect.ts,19,"It looks like 'toUrl' is read from user input and it is used to as a redirect. Ensure 'toUrl' is not externally controlled, otherwise this is an open redirect.",medium
+juice-shop,semgrep,javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\routes\videoHandler.ts,57,"Cannot determine what 'subs' is and it is used with a '<script>' tag. This could be susceptible to cross-site scripting (XSS). Ensure 'subs' is not externally controlled, or sanitize this data.",medium
+juice-shop,semgrep,javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\routes\videoHandler.ts,71,"Cannot determine what 'subs' is and it is used with a '<script>' tag. This could be susceptible to cross-site scripting (XSS). Ensure 'subs' is not externally controlled, or sanitize this data.",medium
+juice-shop,semgrep,generic.html-templates.security.unquoted-attribute-var.unquoted-attribute-var,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\juice-shop\views\dataErasureForm.hbs,38,"Detected a unquoted template variable as an attribute. If unquoted, a malicious actor could inject custom JavaScript handlers. To fix this, add quotes around the template expression, like this: ""{{ ex",medium

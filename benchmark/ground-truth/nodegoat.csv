@@ -1,49 +1,49 @@
-repo,vuln_id,type,rule_id,cwe,file,line,severity
-nodegoat,NODEGOAT-CANDIDATE-0001,secret,generic-api-key,CWE-798,config/env/development.js,18,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0002,secret,generic-api-key,CWE-798,config/env/test.js,5,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0003,secret,generic-api-key,CWE-798,config/env/test.js,6,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0004,secret,private-key,CWE-798,artifacts/cert/server.key,1,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0005,secret,private-key,CWE-798,app/cert/key.pem,1,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0006,sast,generic.html-templates.security.var-in-href.var-in-href,CWE-79,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\nodegoat\app\views\profile.html,78,MEDIUM
-nodegoat,NODEGOAT-CANDIDATE-0007,dependency,CVE-2024-45590,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0008,dependency,CVE-2024-4068,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0009,dependency,CVE-2020-7610,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0010,dependency,CVE-2017-20165,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0011,dependency,CVE-2022-38900,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0012,dependency,CVE-2023-45311,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0013,dependency,CVE-2021-3820,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0014,dependency,CVE-2020-7788,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0015,dependency,CVE-2019-20149,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0016,dependency,CVE-2017-16114,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0017,dependency,CVE-2022-21680,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0018,dependency,CVE-2022-21681,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0019,dependency,CVE-2022-3517,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0020,dependency,CVE-2026-26996,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0021,dependency,CVE-2026-27903,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0022,dependency,CVE-2026-27904,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0023,dependency,CVE-2021-44906,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0027,dependency,CVE-2019-10746,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0028,iac,GHSA-mh5c-679w-hh4r,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0029,dependency,CVE-2022-21803,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0031,dependency,CVE-2024-45296,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0032,dependency,CVE-2024-52798,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0033,dependency,CVE-2026-4867,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0034,dependency,CVE-2022-24999,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0035,dependency,CVE-2022-25883,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0037,dependency,CVE-2019-10747,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0038,dependency,CVE-2021-23440,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0041,dependency,CVE-2023-25345,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0042,dependency,CVE-2021-32803,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0043,dependency,CVE-2021-32804,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0044,dependency,CVE-2021-37701,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0045,dependency,CVE-2021-37712,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0046,dependency,CVE-2021-37713,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0047,dependency,CVE-2026-23745,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0048,dependency,CVE-2026-23950,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0049,dependency,CVE-2026-24842,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0050,dependency,CVE-2026-26960,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0051,dependency,CVE-2026-29786,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0052,dependency,CVE-2026-31802,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0053,dependency,CVE-2021-23358,,package-lock.json,,CRITICAL
-nodegoat,NODEGOAT-CANDIDATE-0054,dependency,CVE-2026-27601,,package-lock.json,,HIGH
-nodegoat,NODEGOAT-CANDIDATE-0055,dependency,CVE-2020-7774,,package-lock.json,,HIGH
+repo,tool,rule_id,category,cwe,severity,file,line,message,confidence
+nodegoat,gitleaks,generic-api-key,secret,CWE-798,HIGH,config/env/test.js,5,Potential secret detected by rule generic-api-key,medium
+nodegoat,gitleaks,generic-api-key,secret,CWE-798,HIGH,config/env/development.js,18,Potential secret detected by rule generic-api-key,medium
+nodegoat,gitleaks,generic-api-key,secret,CWE-798,HIGH,config/env/test.js,6,Potential secret detected by rule generic-api-key,medium
+nodegoat,gitleaks,private-key,secret,CWE-798,CRITICAL,artifacts/cert/server.key,1,Potential secret detected by rule private-key,medium
+nodegoat,gitleaks,private-key,secret,CWE-798,CRITICAL,app/cert/key.pem,1,Potential secret detected by rule private-key,medium
+nodegoat,semgrep,generic.html-templates.security.var-in-href.var-in-href,sast,CWE-79,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\nodegoat\app\views\profile.html,78,Detected a template variable used in an anchor tag with the 'href' attribute. This allows a malicious actor to input the 'javascript:' URI and is subject to cross- site scripting (XSS) attacks. If usi,medium
+nodegoat,trivy,CVE-2024-45590,dependency,,HIGH,package-lock.json,,body-parser: body-parser: Denial of Service Vulnerability in body-parser,medium
+nodegoat,trivy,CVE-2024-4068,dependency,,HIGH,package-lock.json,,braces: braces: fails to limit the number of characters it can handle,medium
+nodegoat,trivy,CVE-2020-7610,dependency,,CRITICAL,package-lock.json,,bson: bson: Deserialization of Untrusted Data could result in Code injection or Excessive CPU load,medium
+nodegoat,trivy,CVE-2017-20165,dependency,,HIGH,package-lock.json,,debug: A vulnerability classified as problematic has been found in debug-js d ...,medium
+nodegoat,trivy,CVE-2022-38900,dependency,,HIGH,package-lock.json,,decode-uri-component: decode-uri-component: improper input validation resulting in DoS,medium
+nodegoat,trivy,CVE-2023-45311,dependency,,CRITICAL,package-lock.json,,fsevents: Code injection in fsevents,medium
+nodegoat,trivy,CVE-2021-3820,dependency,,HIGH,package-lock.json,,i: inflect vulnerable to Inefficient Regular Expression Complexity,medium
+nodegoat,trivy,CVE-2020-7788,dependency,,HIGH,package-lock.json,,ini: nodejs-ini: Prototype pollution via malicious INI file,medium
+nodegoat,trivy,CVE-2019-20149,dependency,,HIGH,package-lock.json,,kind-of: nodejs-kind-of: ctorName in index.js allows external user input to overwrite certain internal attributes,medium
+nodegoat,trivy,CVE-2017-16114,dependency,,HIGH,package-lock.json,,marked: The marked module is vulnerable to a regular expression denial of serv ...,medium
+nodegoat,trivy,CVE-2022-21680,dependency,,HIGH,package-lock.json,,marked: marked: regular expression block.def may lead Denial of Service,medium
+nodegoat,trivy,CVE-2022-21681,dependency,,HIGH,package-lock.json,,marked: marked: regular expression inline.reflinkSearch may lead Denial of Service,medium
+nodegoat,trivy,CVE-2022-3517,dependency,,HIGH,package-lock.json,,minimatch: nodejs-minimatch: ReDoS via the braceExpand function,medium
+nodegoat,trivy,CVE-2026-26996,dependency,,HIGH,package-lock.json,,minimatch: minimatch: minimatch: Denial of Service via specially crafted glob patterns,medium
+nodegoat,trivy,CVE-2026-27903,dependency,,HIGH,package-lock.json,,minimatch: minimatch: minimatch: Denial of Service due to unbounded recursive backtracking via crafted glob patterns,medium
+nodegoat,trivy,CVE-2026-27904,dependency,,HIGH,package-lock.json,,minimatch: minimatch: Minimatch: Denial of Service via catastrophic backtracking in glob expressions,medium
+nodegoat,trivy,CVE-2021-44906,dependency,,CRITICAL,package-lock.json,,minimist: minimist: prototype pollution,medium
+nodegoat,trivy,CVE-2019-10746,dependency,,CRITICAL,package-lock.json,,mixin-deep: nodejs-mixin-deep: prototype pollution in function mixin-deep,medium
+nodegoat,trivy,GHSA-mh5c-679w-hh4r,iac,,HIGH,package-lock.json,,mongodb: Denial of Service in mongodb,medium
+nodegoat,trivy,CVE-2022-21803,dependency,,HIGH,package-lock.json,,nconf: nconf: Prototype pollution in memory store,medium
+nodegoat,trivy,CVE-2024-45296,dependency,,HIGH,package-lock.json,,path-to-regexp: path-to-regexp: Backtracking regular expressions cause ReDoS,medium
+nodegoat,trivy,CVE-2024-52798,dependency,,HIGH,package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp Unpatched `path-to-regexp` ReDoS in 0.1.x,medium
+nodegoat,trivy,CVE-2026-4867,dependency,,HIGH,package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp: Denial of Service via catastrophic backtracking from malformed URL parameters,medium
+nodegoat,trivy,CVE-2022-24999,dependency,,HIGH,package-lock.json,,"qs: express: ""qs"" prototype poisoning causes the hang of the node process",medium
+nodegoat,trivy,CVE-2022-25883,dependency,,HIGH,package-lock.json,,semver: nodejs-semver: Regular expression denial of service,medium
+nodegoat,trivy,CVE-2019-10747,dependency,,CRITICAL,package-lock.json,,set-value: nodejs-set-value: prototype pollution in function set-value,medium
+nodegoat,trivy,CVE-2021-23440,dependency,,HIGH,package-lock.json,,set-value: nodejs-set-value: type confusion allows bypass of CVE-2019-10747,medium
+nodegoat,trivy,CVE-2023-25345,dependency,,HIGH,package-lock.json,,swig: Arbitrary local file read vulnerability during template rendering ,medium
+nodegoat,trivy,CVE-2021-32803,dependency,,HIGH,package-lock.json,,tar: nodejs-tar: Insufficient symlink protection allowing arbitrary file creation and overwrite,medium
+nodegoat,trivy,CVE-2021-32804,dependency,,HIGH,package-lock.json,,tar: nodejs-tar: Insufficient absolute path sanitization allowing arbitrary file creation and overwrite,medium
+nodegoat,trivy,CVE-2021-37701,dependency,,HIGH,package-lock.json,,tar: nodejs-tar: Insufficient symlink protection due to directory cache poisoning using symbolic links allowing arbitrary file creation and overwrite,medium
+nodegoat,trivy,CVE-2021-37712,dependency,,HIGH,package-lock.json,,tar: nodejs-tar: Insufficient symlink protection due to directory cache poisoning using symbolic links allowing arbitrary file creation and overwrite,medium
+nodegoat,trivy,CVE-2021-37713,dependency,,HIGH,package-lock.json,,tar: nodejs-tar: Arbitrary File Creation/Overwrite on Windows via insufficient relative path sanitization,medium
+nodegoat,trivy,CVE-2026-23745,dependency,,HIGH,package-lock.json,,tar: node-tar: tar: node-tar: Arbitrary file overwrite and symlink poisoning via unsanitized linkpaths in archives,medium
+nodegoat,trivy,CVE-2026-23950,dependency,,HIGH,package-lock.json,,tar: node-tar: tar: node-tar: Arbitrary file overwrite via Unicode path collision race condition,medium
+nodegoat,trivy,CVE-2026-24842,dependency,,HIGH,package-lock.json,,tar: node-tar: tar: node-tar: Arbitrary file creation via path traversal bypass in hardlink security check,medium
+nodegoat,trivy,CVE-2026-26960,dependency,,HIGH,package-lock.json,,tar: node-tar: node-tar: Arbitrary file read/write via malicious archive hardlink creation,medium
+nodegoat,trivy,CVE-2026-29786,dependency,,HIGH,package-lock.json,,tar: node-tar: hardlink path traversal via drive-relative linkpath,medium
+nodegoat,trivy,CVE-2026-31802,dependency,,HIGH,package-lock.json,,tar: tar: tar: File overwrite via drive-relative symlink traversal,medium
+nodegoat,trivy,CVE-2021-23358,dependency,,CRITICAL,package-lock.json,,underscore: nodejs-underscore: Arbitrary code execution via the template function,medium
+nodegoat,trivy,CVE-2026-27601,dependency,,HIGH,package-lock.json,,underscore: Underscore.js: Underscore.js: Denial of Service via recursive data structures in flatten and isEqual functions,medium
+nodegoat,trivy,CVE-2020-7774,dependency,,HIGH,package-lock.json,,y18n: nodejs-y18n: prototype pollution vulnerability,medium

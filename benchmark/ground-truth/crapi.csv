@@ -1,2 +1,97 @@
-repo,vuln_id,type,cwe,file,line,severity
-
+repo,tool,rule_id,category,cwe,severity,file,line,message,confidence
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/chatbot/certs/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1197,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1667,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1954,Potential secret detected by rule jwt,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/workshop/certs/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/web/certs/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/identity/src/main/resources/certs/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/community/certs/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,services/gateway-service/server.key,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1430,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1514,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1684,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1375,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1459,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1629,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1,Potential secret detected by rule jwt,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,deploy/helm/keys/private.pem,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,deploy/docker/.keys/private.pem,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,private-key,secret,CWE-798,CRITICAL,deploy/k8s/keys/private.pem,1,Potential secret detected by rule private-key,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1128,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1199,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI.postman_collection.json,1348,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI Accepted.postman_collection.json,926,Potential secret detected by rule jwt,medium
+crapi,gitleaks,jwt,secret,CWE-798,CRITICAL,postman_collections/crAPI Accepted.postman_collection.json,1030,Potential secret detected by rule jwt,medium
+crapi,semgrep,python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host,sast,CWE-668,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\chatbot\src\mcpserver\__main__.py,15,Running flask app with host 0.0.0.0 could expose the server publicly.,medium
+crapi,semgrep,go.lang.security.audit.crypto.math_random.math-random-used,sast,CWE-338,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\gateway-service\main.go,9,Do not use `math/rand`. Use `crypto/rand` instead.,medium
+crapi,semgrep,java.spring.security.audit.spring-csrf-disabled.spring-csrf-disabled,sast,CWE-352,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\identity\src\main\java\com\crapi\config\WebSecurityConfig.java,98,CSRF protection is disabled for this configuration. This is a security risk.,medium
+crapi,semgrep,java.lang.security.audit.crypto.ssl.insecure-hostname-verifier.insecure-hostname-verifier,sast,CWE-295,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\identity\src\main\java\com\crapi\service\Impl\VehicleOwnershipServiceImpl.java,29,"Insecure HostnameVerifier implementation detected. This will accept any SSL certificate with any hostname, which creates the possibility for man-in-the-middle attacks.",medium
+crapi,semgrep,python.requests.security.disabled-cert-validation.disabled-cert-validation,sast,CWE-295,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\workshop\core\management\commands\seed_database.py,220,Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.,medium
+crapi,semgrep,python.django.security.audit.csrf-exempt.no-csrf-exempt,sast,CWE-352,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\workshop\crapi\mechanic\views.py,54,"Detected usage of @csrf_exempt, which indicates that there is no CSRF token set for this route. This could lead to an attacker manipulating the user's account and exfiltration of private data. Instead",medium
+crapi,semgrep,python.requests.security.disabled-cert-validation.disabled-cert-validation,sast,CWE-295,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\workshop\crapi\merchant\views.py,87,Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.,medium
+crapi,semgrep,python.requests.security.disabled-cert-validation.disabled-cert-validation,sast,CWE-295,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\workshop\crapi\shop\views.py,141,Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.,medium
+crapi,semgrep,python.requests.security.disabled-cert-validation.disabled-cert-validation,sast,CWE-295,MEDIUM,D:\UIT\DACN\ci-cd-security-advance\benchmark\workdir\repos\crapi\services\workshop\utils\jwt.py,53,Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.,medium
+crapi,trivy,CVE-2026-45829,dependency,,CRITICAL,services/chatbot/requirements.txt,,chromadb: chromadb: ChromaDB Python Project: Arbitrary code execution via pre-authentication code injection,medium
+crapi,trivy,CVE-2026-32871,dependency,,CRITICAL,services/chatbot/requirements.txt,,fastmcp: fastmcp: FastMCP: Authenticated Server-Side Request Forgery via path traversal in OpenAPI path parameters,medium
+crapi,trivy,CVE-2025-69196,dependency,,HIGH,services/chatbot/requirements.txt,,fastmcp: fastmcp: FastMCP: Improper token issuance due to incorrect resource parameter handling,medium
+crapi,trivy,CVE-2026-27124,dependency,,HIGH,services/chatbot/requirements.txt,,fastmcp: FastMCP: FastMCP OAuthProxy: FastMCP OAuthProxy: Unauthorized actions due to improper consent validation in GitHub OAuth,medium
+crapi,trivy,GHSA-rcfx-77hg-w2wv,iac,,HIGH,services/chatbot/requirements.txt,,fastmcp: FastMCP updated to MCP 1.23+ due to CVE-2025-66416,medium
+crapi,trivy,CVE-2025-68664,dependency,,CRITICAL,services/chatbot/requirements.txt,,langchain-core: langchain-core: LangChain: Arbitrary code execution via serialization injection,medium
+crapi,trivy,CVE-2025-65106,dependency,,HIGH,services/chatbot/requirements.txt,,langchain-core: langchain-core: LangChain Vulnerable to Template Injection via Attribute Access in Prompt Templates,medium
+crapi,trivy,CVE-2026-34070,dependency,,HIGH,services/chatbot/requirements.txt,,langchain-core: langchain: path traversal in legacy load_prompt functions in langchain-core,medium
+crapi,trivy,CVE-2026-44843,dependency,,HIGH,services/chatbot/requirements.txt,,langchain-core: LangChain vulnerable to unsafe deserialization of attacker-controlled objects through overly broad `load()` allowlists,medium
+crapi,trivy,CVE-2025-64712,dependency,,CRITICAL,services/chatbot/requirements.txt,,unstructured: Unstructured has Path Traversal via Malicious MSG Attachment that Allows Arbitrary File Write,medium
+crapi,trivy,CVE-2020-26160,dependency,,HIGH,services/community/go.mod,,github.com/dgrijalva/jwt-go: jwt-go: access restriction bypass vulnerability,medium
+crapi,trivy,CVE-2024-45337,dependency,,CRITICAL,services/community/go.mod,,golang.org/x/crypto: golang.org/x/crypto/ssh: Misuse of ServerConfig.PublicKeyCallback may cause authorization bypass in golang.org/x/crypto,medium
+crapi,trivy,CVE-2020-29652,dependency,,HIGH,services/community/go.mod,,golang.org/x/crypto: golang: crypto/ssh: crafted authentication request can lead to nil pointer dereference,medium
+crapi,trivy,CVE-2021-43565,dependency,,HIGH,services/community/go.mod,,golang.org/x/crypto: golang.org/x/crypto: empty plaintext packet causes panic,medium
+crapi,trivy,CVE-2022-27191,dependency,,HIGH,services/community/go.mod,,golang.org/x/crypto: golang: crash in a golang.org/x/crypto/ssh server,medium
+crapi,trivy,CVE-2025-22869,dependency,,HIGH,services/community/go.mod,,golang.org/x/crypto: golang.org/x/crypto/ssh: Denial of Service in the Key Exchange of golang.org/x/crypto/ssh,medium
+crapi,trivy,CVE-2021-38561,dependency,,HIGH,services/community/go.mod,,golang.org/x/text: golang: out-of-bounds read in golang.org/x/text/language leads to DoS,medium
+crapi,trivy,CVE-2022-32149,dependency,,HIGH,services/community/go.mod,,golang.org/x/text: golang: golang.org/x/text/language: ParseAcceptLanguage takes a long time to parse complex tags,medium
+crapi,trivy,CVE-2026-44728,dependency,,HIGH,services/web/package-lock.json,,@babel/plugin-transform-modules-systemjs: Babel is a compiler for writing next generation JavaScript. From 7.12. ...,medium
+crapi,trivy,CVE-2026-22029,dependency,,HIGH,services/web/package-lock.json,,@remix-run/router: @remix-run/router: react-router: React Router vulnerable to XSS via Open Redirects,medium
+crapi,trivy,CVE-2026-6321,dependency,,HIGH,services/web/package-lock.json,,fast-uri: fast-uri: fast-uri: Path traversal vulnerability allows bypass of security policies,medium
+crapi,trivy,CVE-2026-6322,dependency,,HIGH,services/web/package-lock.json,,fast-uri: fast-uri: fast-uri: URI authority bypass due to improper delimiter handling,medium
+crapi,trivy,CVE-2026-32141,dependency,,HIGH,services/web/package-lock.json,,flatted: flatted: flatted: Unbounded recursion DoS in parse() revive phase,medium
+crapi,trivy,CVE-2026-33228,dependency,,HIGH,services/web/package-lock.json,,flatted: flatted: Flatted: Prototype pollution vulnerability allows arbitrary code execution via crafted JSON.,medium
+crapi,trivy,CVE-2025-7783,dependency,,CRITICAL,services/web/package-lock.json,,form-data: form-data: Unsafe random function in form-data,medium
+crapi,trivy,CVE-2026-12143,dependency,,HIGH,services/web/package-lock.json,,form-data: form-data is a library for creating readable multipart/form-data strea ...,medium
+crapi,trivy,CVE-2025-64756,dependency,,HIGH,services/web/package-lock.json,,glob: glob: glob: Command Injection Vulnerability via Malicious Filenames,medium
+crapi,trivy,CVE-2026-1615,dependency,,HIGH,services/web/package-lock.json,,jsonpath: jsonpath: jsonpath: Arbitrary Code Execution via unsafe JSON Path expression evaluation,medium
+crapi,trivy,CVE-2025-65945,dependency,,HIGH,services/web/package-lock.json,,jws: node-jws: auth0/node-jws: Improper signature verification in HS256 algorithm,medium
+crapi,trivy,CVE-2026-4800,dependency,,HIGH,services/web/package-lock.json,,lodash: lodash: lodash: Arbitrary code execution via untrusted input in template imports,medium
+crapi,trivy,CVE-2026-26996,dependency,,HIGH,services/web/package-lock.json,,minimatch: minimatch: minimatch: Denial of Service via specially crafted glob patterns,medium
+crapi,trivy,CVE-2026-27903,dependency,,HIGH,services/web/package-lock.json,,minimatch: minimatch: minimatch: Denial of Service due to unbounded recursive backtracking via crafted glob patterns,medium
+crapi,trivy,CVE-2026-27904,dependency,,HIGH,services/web/package-lock.json,,minimatch: minimatch: Minimatch: Denial of Service via catastrophic backtracking in glob expressions,medium
+crapi,trivy,CVE-2025-12816,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: node-forge: Interpretation conflict vulnerability allows bypassing cryptographic verifications,medium
+crapi,trivy,CVE-2025-66031,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: node-forge ASN.1 Unbounded Recursion,medium
+crapi,trivy,CVE-2026-33891,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: node-forge: Denial of Service via infinite loop in BigInteger.modInverse(),medium
+crapi,trivy,CVE-2026-33894,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: Forge: Signature Forgery via Weak RSASSA PKCS#1 v1.5 Verification,medium
+crapi,trivy,CVE-2026-33895,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: Forge: Authentication bypass via forged Ed25519 cryptographic signatures,medium
+crapi,trivy,CVE-2026-33896,dependency,,HIGH,services/web/package-lock.json,,node-forge: node-forge: Forge (node-forge): Certificate validation bypass allows unauthorized certificate issuance,medium
+crapi,trivy,CVE-2021-3803,dependency,,HIGH,services/web/package-lock.json,,nth-check: nodejs-nth-check: inefficient regular expression complexity,medium
+crapi,trivy,CVE-2026-4867,dependency,,HIGH,services/web/package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp: Denial of Service via catastrophic backtracking from malformed URL parameters,medium
+crapi,trivy,CVE-2026-4926,dependency,,HIGH,services/web/package-lock.json,,path-to-regexp: path-to-regexp: path-to-regexp: Denial of Service via crafted regular expressions,medium
+crapi,trivy,CVE-2026-33671,dependency,,HIGH,services/web/package-lock.json,,picomatch: picomatch: Picomatch: Regular Expression Denial of Service via crafted extglob patterns,medium
+crapi,trivy,CVE-2026-27606,dependency,,HIGH,services/web/package-lock.json,,rollup: rollup: Rollup: Remote Code Execution via Path Traversal Vulnerability,medium
+crapi,trivy,GHSA-5c6j-r48x-rmvq,iac,,HIGH,services/web/package-lock.json,,serialize-javascript: Serialize JavaScript is Vulnerable to RCE via RegExp.flags and Date.prototype.toISOString(),medium
+crapi,trivy,CVE-2026-9277,dependency,,CRITICAL,services/web/package-lock.json,,shell-quote: shell-quote: shell-quote: Arbitrary code execution via command injection due to unescaped line terminators,medium
+crapi,trivy,CVE-2026-29074,dependency,,HIGH,services/web/package-lock.json,,svgo: svgo: SVGO: Denial of Service via XML entity expansion,medium
+crapi,trivy,CVE-2026-27601,dependency,,HIGH,services/web/package-lock.json,,underscore: Underscore.js: Underscore.js: Denial of Service via recursive data structures in flatten and isEqual functions,medium
+crapi,trivy,CVE-2026-48779,dependency,,HIGH,services/web/package-lock.json,,ws: ws is an open source WebSocket client and server for Node.js. All vers ...,medium
+crapi,trivy,CVE-2026-32597,dependency,,HIGH,services/workshop/requirements.txt,,PyJWT: pyjwt: PyJWT accepts unknown `crit` header extensions (RFC 7515 §4.1.11 MUST violation),medium
+crapi,trivy,CVE-2026-48526,dependency,,HIGH,services/workshop/requirements.txt,,PyJWT: python-pyjwt: PyJWT: Authentication bypass due to forged JSON Web Tokens,medium
+crapi,trivy,CVE-2023-25577,dependency,,HIGH,services/workshop/requirements.txt,,Werkzeug: python-werkzeug: high resource usage when parsing multipart form data with many fields,medium
+crapi,trivy,CVE-2024-34069,dependency,,HIGH,services/workshop/requirements.txt,,Werkzeug: python-werkzeug: user may execute code on a developer's machine,medium
+crapi,trivy,CVE-2026-32274,dependency,,HIGH,services/workshop/requirements.txt,,black: black: Black: Arbitrary file writes from unsanitized user input in cache file name,medium
+crapi,trivy,CVE-2023-38325,dependency,,HIGH,services/workshop/requirements.txt,,cryptography: python-cryptography: SSH certificate encoding/parsing incompatibility with OpenSSH,medium
+crapi,trivy,CVE-2023-50782,dependency,,HIGH,services/workshop/requirements.txt,,cryptography: python-cryptography: Bleichenbacher timing oracle attack against RSA decryption - incomplete fix for CVE-2020-25659,medium
+crapi,trivy,CVE-2024-26130,dependency,,HIGH,services/workshop/requirements.txt,,cryptography: python-cryptography: NULL pointer dereference with pkcs12.serialize_key_and_certificates when called with a non-matching certificate and private key a,medium
+crapi,trivy,CVE-2026-26007,dependency,,HIGH,services/workshop/requirements.txt,,cryptography: cryptography: cryptography Subgroup Attack Due to Missing Subgroup Validation for SECT Curves,medium
+crapi,trivy,GHSA-537c-gmf6-5ccf,iac,,HIGH,services/workshop/requirements.txt,,cryptography: Vulnerable OpenSSL included in cryptography wheels,medium
+crapi,trivy,CVE-2024-1135,dependency,,HIGH,services/workshop/requirements.txt,,gunicorn: python-gunicorn: HTTP Request Smuggling due to improper validation of Transfer-Encoding headers,medium
+crapi,trivy,CVE-2024-6827,dependency,,HIGH,services/workshop/requirements.txt,,gunicorn: gunicorn: HTTP Request Smuggling in benoitc/gunicorn,medium
+crapi,trivy,CVE-2026-27459,dependency,,HIGH,services/workshop/requirements.txt,,pyOpenSSL: pyOpenSSL: DTLS cookie callback buffer overflow,medium
+crapi,trivy,CVE-2024-4340,dependency,,HIGH,services/workshop/requirements.txt,,sqlparse: sqlparse: parsing heavily nested list leads to denial of service,medium
